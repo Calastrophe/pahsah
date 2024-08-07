@@ -7,7 +7,7 @@ use std::fmt::Display;
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Triangle {
     /// The normal vector of the given triangle.
-    pub normal_vector: Vec3,
+    pub normal: Vec3,
     /// The first vertex of the given triangle.
     pub v1: Vec3,
     /// The second vertex of the given triangle.
@@ -22,8 +22,8 @@ impl Display for Triangle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}, {}, {}, {}, {}",
-            self.normal_vector, self.v1, self.v2, self.v3, self.attribute
+            "{}, ({}, {}, {}), {}",
+            self.normal, self.v1, self.v2, self.v3, self.attribute
         )
     }
 }
@@ -32,7 +32,7 @@ impl Triangle {
     /// Create a new triangle from the given components.
     pub const fn new(normal_vector: Vec3, v1: Vec3, v2: Vec3, v3: Vec3, attribute: u16) -> Self {
         Triangle {
-            normal_vector,
+            normal: normal_vector,
             v1,
             v2,
             v3,

@@ -1,6 +1,6 @@
 use super::{lexer::Token, STP};
 use logos::Lexer;
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 pub struct Parser<'a> {
     lexer: Lexer<'a, Token>,
