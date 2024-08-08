@@ -1,13 +1,19 @@
-use super::{STLReaderExt, Triangle, STL, TRIANGLE_SIZE};
+use super::{STLReaderExt, STL, TRIANGLE_SIZE};
 use byteorder::{LittleEndian, ReadBytesExt};
+use pyo3::prelude::*;
 use rayon::prelude::*;
 use std::{
     fs::File,
     io::{self, Cursor, Read, Seek, SeekFrom},
-    path::Path,
 };
 
-pub fn parse<P: AsRef<Path>>(path: P) -> io::Result<STL> {
+#[pymodule]
+pub fn parallel(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(parse, m)?)
+}
+
+#[pyfunction]
+pub fn parse(path: &str) -> io::Result<STL> {
     let mut file = File::open(path)?;
 
     let mut contents = Vec::new();

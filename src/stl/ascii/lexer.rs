@@ -19,8 +19,8 @@ pub enum Token {
     EndLoop,
     #[token("endfacet")]
     EndFacet,
-    #[regex(r"endsolid")]
+    #[token("endsolid")]
     EndSolid,
-    #[regex(r"[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?", |lex| lex.slice().parse::<f32>().unwrap())]
+    #[regex(r"[-+]?\d+(\.\d*)?([eE][-+]?\d+)?", |lex| lex.slice().parse::<f32>().unwrap())]
     Float(f32),
 }
