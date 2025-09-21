@@ -1,4 +1,4 @@
-use super::{STLReaderExt, Triangle, STL, TRIANGLE_SIZE};
+use super::{STLReaderExt, STL, TRIANGLE_SIZE};
 use byteorder::{LittleEndian, ReadBytesExt};
 use rayon::prelude::*;
 use std::{
@@ -9,19 +9,14 @@ use std::{
 
 pub fn parse<P: AsRef<Path>>(path: P) -> io::Result<STL> {
     let mut file = File::open(path)?;
-
     let mut contents = Vec::new();
-
     let _ = file.read_to_end(&mut contents)?;
 
     let (header, contents) = contents.split_at(84);
-
     let mut header = Cursor::new(header);
-
     let _ = header.seek(SeekFrom::Current(80))?;
 
     let num_triangles = header.read_u32::<LittleEndian>()? as usize;
-
     let chunk_size = num_triangles / 4;
 
     let triangles = contents

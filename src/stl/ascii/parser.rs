@@ -45,11 +45,7 @@ impl<'a> Parser<'a> {
     /// Parse out a triangle from the token stream.
     fn parse_triangle(&mut self) -> Result<Triangle, Error> {
         self.parse_token(Token::Normal)?;
-        let normal = Vec3 {
-            x: self.parse_f32()?,
-            y: self.parse_f32()?,
-            z: self.parse_f32()?,
-        };
+        let normal = Vec3::new(self.parse_f32()?, self.parse_f32()?, self.parse_f32()?);
         let [v1, v2, v3] = self.parse_loop()?;
         self.parse_token(Token::EndFacet)?;
         Ok(Triangle::new(normal, v1, v2, v3, 0))
@@ -59,21 +55,23 @@ impl<'a> Parser<'a> {
     fn parse_loop(&mut self) -> Result<[Vec3; 3], Error> {
         self.parse_token(Token::Outer)?;
         self.parse_token(Token::Loop)?;
-        let v1 = self.parse_vertex()?;
-        let v2 = self.parse_vertex()?;
-        let v3 = self.parse_vertex()?;
+        let vertices = [
+            self.parse_vertex()?,
+            self.parse_vertex()?,
+            self.parse_vertex()?,
+        ];
         self.parse_token(Token::EndLoop)?;
-        Ok([v1, v2, v3])
+        Ok(vertices)
     }
 
-    /// Parse out a single vertex from the token stream.
+    /// Parses a single vertex from the token stream.
     fn parse_vertex(&mut self) -> Result<Vec3, Error> {
         self.parse_token(Token::Vertex)?;
-        Ok(Vec3 {
-            x: self.parse_f32()?,
-            y: self.parse_f32()?,
-            z: self.parse_f32()?,
-        })
+        Ok(Vec3::new(
+            self.parse_f32()?,
+            self.parse_f32()?,
+            self.parse_f32()?,
+        ))
     }
 
     /// Parse a specific token from the stream, otherwise throw an error.
@@ -97,17 +95,14 @@ impl<'a> Parser<'a> {
     }
 }
 
-/// Helper for invalid keyword
 fn invalid_keyword(s: &str) -> Error {
     Error::new(ErrorKind::InvalidData, format!("Invalid token: {}", s))
 }
 
-/// Helper for unexpected end of input
 fn unexpected_end() -> Error {
     Error::new(ErrorKind::InvalidData, "Unexpected end of input")
 }
 
-/// Helper for unexpected token
 fn unexpected_token(token: Token) -> Error {
     Error::new(
         ErrorKind::InvalidData,
